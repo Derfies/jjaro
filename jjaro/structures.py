@@ -186,6 +186,22 @@ class ColorTable(StructureBase):
         ('blue',    ctypes.c_uint16),
     )
 
+    @property
+    def r(self):
+        return self.red >> 8
+
+    @property
+    def g(self):
+        return self.green >> 8
+
+    @property
+    def b(self):
+        return self.blue >> 8
+
+    @property
+    def rgb(self):
+        return (self.r, self.g, self.b)
+
 
 class BitmapHeader(StructureBase):
 
