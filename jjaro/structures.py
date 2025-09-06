@@ -80,47 +80,47 @@ class Point(StructureBase):
 class Line(StructureBase):
 
     _fields_ = [
-        ('endpoint_indices', ctypes.c_int16 * 2),
-        ('flags', ctypes.c_uint16),
-        ('length', ctypes.c_int16),
-        ('highest_adjacent_floor', ctypes.c_int16),
-        ('lowest_adjacent_ceiling', ctypes.c_int16),
-        ('clockwise_polygon_side_index', ctypes.c_int16),
+        ('endpoint_indices',                    ctypes.c_int16 * 2),
+        ('flags',                               ctypes.c_uint16),
+        ('length',                              ctypes.c_int16),
+        ('highest_adjacent_floor',              ctypes.c_int16),
+        ('lowest_adjacent_ceiling',             ctypes.c_int16),
+        ('clockwise_polygon_side_index',        ctypes.c_int16),
         ('counterclockwise_polygon_side_index', ctypes.c_int16),
-        ('clockwise_polygon_owner', ctypes.c_int16),
-        ('counterclockwise_polygon_owner', ctypes.c_int16),
-        ('_padding', ctypes.c_uint8 * 12),
+        ('clockwise_polygon_owner',             ctypes.c_int16),
+        ('counterclockwise_polygon_owner',      ctypes.c_int16),
+        ('_padding',                            ctypes.c_uint8 * 12),
     ]
 
 
 class Polygon(StructureBase):
 
     _fields_ = [
-        ('type', ctypes.c_int16),
-        ('flags', ctypes.c_uint16),
-        ('permutation', ctypes.c_int16),
-        ('vertex_count', ctypes.c_uint16),
-        ('endpoint_indices', ctypes.c_int16 * MAX_VERTEX_COUNT),
-        ('line_indices', ctypes.c_int16 * MAX_VERTEX_COUNT),
-        ('floor_texture', ctypes.c_uint16),
-        ('ceiling_texture', ctypes.c_uint16),
-        ('floor_height', ctypes.c_int16),
-        ('ceiling_height', ctypes.c_int16),
-        ('floor_light', ctypes.c_int16),
-        ('ceiling_light', ctypes.c_int16),
-        ('_area', ctypes.c_int32),
-        ('first_object_index', ctypes.c_int16),
+        ('type',                        ctypes.c_int16),
+        ('flags',                       ctypes.c_uint16),
+        ('permutation',                 ctypes.c_int16),
+        ('vertex_count',                ctypes.c_uint16),
+        ('endpoint_indices',            ctypes.c_int16 * MAX_VERTEX_COUNT),
+        ('line_indices',                ctypes.c_int16 * MAX_VERTEX_COUNT),
+        ('floor_texture',               ctypes.c_uint16),
+        ('ceiling_texture',             ctypes.c_uint16),
+        ('floor_height',                ctypes.c_int16),
+        ('ceiling_height',              ctypes.c_int16),
+        ('floor_light',                 ctypes.c_int16),
+        ('ceiling_light',               ctypes.c_int16),
+        ('_area',                       ctypes.c_int32),
+        ('first_object_index',          ctypes.c_int16),
         ('_first_exclusion_zone_index', ctypes.c_int16),
-        ('_line_exclusion_zone_count', ctypes.c_int16),
+        ('_line_exclusion_zone_count',  ctypes.c_int16),
         ('_point_exclusion_zone_count', ctypes.c_int16),
-        ('floor_transfer_mode', ctypes.c_int16),
-        ('ceiling_transfer_mode', ctypes.c_int16),
-        ('adjacent_polygon_indices', ctypes.c_int16 * MAX_VERTEX_COUNT),
-        ('_first_neighbor_index', ctypes.c_int16),
-        ('_neighbor_count', ctypes.c_int16),
-        ('_center_x', ctypes.c_int16),
-        ('_center_y', ctypes.c_int16),
-        ('side_indices', ctypes.c_int16 * SIDE_COUNT),
+        ('floor_transfer_mode',         ctypes.c_int16),
+        ('ceiling_transfer_mode',       ctypes.c_int16),
+        ('adjacent_polygon_indices',    ctypes.c_int16 * MAX_VERTEX_COUNT),
+        ('_first_neighbor_index',       ctypes.c_int16),
+        ('_neighbor_count',             ctypes.c_int16),
+        ('_center_x',                   ctypes.c_int16),
+        ('_center_y',                   ctypes.c_int16),
+        ('side_indices',                ctypes.c_int16 * SIDE_COUNT),
 
         # ('floor_origin_x', ctypes.c_int16),
         # ('floor_origin_y', ctypes.c_int16),
@@ -140,3 +140,64 @@ class Polygon(StructureBase):
         # TODO: Missing 8 bytes somewhere. Below should be 2 only.
         ('_padding', ctypes.c_uint8 * 6),               # 2 bytes skipped at the end
     ]
+
+
+class CollectionHeader(StructureBase):
+
+    _fields_ = (
+        ('status',      ctypes.c_int16),
+        ('flags',       ctypes.c_uint16),
+        ('offset8',     ctypes.c_int32),
+        ('length8',     ctypes.c_int32),
+        ('offset16',    ctypes.c_int32),
+        ('length16',    ctypes.c_int32),
+        ('_unused',     ctypes.c_uint8 * 12),
+    )
+
+
+class Collection(StructureBase):
+
+    _fields_ = (
+        ('version',                         ctypes.c_int16),
+        ('type',                            ctypes.c_int16),
+        ('flags',                           ctypes.c_uint16),
+        ('colors_per_table',                ctypes.c_int16),
+        ('color_table_count',               ctypes.c_int16),
+        ('color_tables_offset',             ctypes.c_int32),
+        ('high_level_shape_count',          ctypes.c_int16),
+        ('high_level_shape_table_offset',   ctypes.c_int32),
+        ('low_level_shape_count',           ctypes.c_int16),
+        ('low_level_shape_table_offset',    ctypes.c_int32),
+        ('bitmap_count',                    ctypes.c_int16),
+        ('bitmap_table_offset',             ctypes.c_int32),
+        ('scale_factor',                    ctypes.c_int16),
+        ('collection_size',                 ctypes.c_int32),
+        ('_unused',                         ctypes.c_uint8 * 506),
+    )
+
+
+class ColorTable(StructureBase):
+
+    _fields_ = (
+        ('flags',   ctypes.c_uint8),
+        ('value',   ctypes.c_uint8),
+        ('red',     ctypes.c_uint16),
+        ('green',   ctypes.c_uint16),
+        ('blue',    ctypes.c_uint16),
+    )
+
+
+class BitmapHeader(StructureBase):
+
+    _fields_ = [
+        ('width',           ctypes.c_int16),
+        ('height',          ctypes.c_int16),
+        ('bytes_per_row',   ctypes.c_int16),
+        ('flags',           ctypes.c_int16),
+        ('bit_depth',       ctypes.c_int16),
+        ('_unused',         ctypes.c_uint8 * 20),
+    ]
+
+    @property
+    def column_major(self):
+        return bool(self.flags & 1 << 7)
