@@ -176,7 +176,7 @@ class Collection(StructureBase):
     )
 
 
-class ColorTable(StructureBase):
+class Color(StructureBase):
 
     _fields_ = (
         ('flags',   ctypes.c_uint8),
@@ -216,4 +216,8 @@ class BitmapHeader(StructureBase):
 
     @property
     def column_major(self):
-        return bool(self.flags & 1 << 7)
+        return bool(self.flags & 1 << 15)
+
+    @property
+    def is_transparent(self):
+        return bool(self.flags & 1 << 14)
