@@ -7,6 +7,7 @@ from jjaro.structures import BitmapHeader, Color, CollectionHeader, Collection
 
 
 def scan_shapes(path):
+    textures = []
     with open(path, 'rb') as f:
 
         headers = []
@@ -14,12 +15,16 @@ def scan_shapes(path):
             header = CollectionHeader.from_stream(f)
             headers.append(header)
 
-        for header in headers[18:19]:
+        bitmap_id_offset = 0
+
+        for p, header in enumerate(headers):
 
             f.seek(header.offset8)
             collection = Collection.from_stream(f)
 
-            print(collection)
+            print(p, collection)
+            print('    ->', bitmap_id_offset)
+            bitmap_id_offset += collection.bitmap_count
 
             colors = []
             f.seek(header.offset8 + collection.color_tables_offset)
@@ -29,7 +34,7 @@ def scan_shapes(path):
                     colors.append(c.rgb)
 
             colors = np.array(np.vstack(colors), dtype=np.uint8)
-            for i in range(0, 5):
+            for i in range(collection.bitmap_count):#range(0, 5):
                 f.seek(header.offset8 + collection.bitmap_table_offset + i * 4)
                 bitmap_header_offset = struct.unpack('>i', f.read(4))[0]
 
@@ -62,15 +67,29 @@ def scan_shapes(path):
                         line = np.frombuffer(f.read(num_bytes), dtype=np.uint8)
                         bitmap_indices[first_row:last_row, c] = line
 
-                try:
-                    result = colors[bitmap_indices]
-                    img = Image.fromarray(result, 'RGB')
-                except:
-                    print('FAILED')
-                    img = Image.fromarray(bitmap_indices, 'L')
-                img.show()
+                # try:
+                #     result = colors[bitmap_indices]
+                #     img = Image.fromarray(result, 'RGB')
+                # except:
+                #     print('FAILED')
+                #     img = Image.fromarray(bitmap_indices, 'L')
+                # img.show()
+                textures.append(colors[bitmap_indices])
+
+    return textures
 
 
 if __name__ == '__main__':
     import sys
-    scan_shapes(sys.argv[1])
+    textures = scan_shapes(sys.argv[1])
+    print(len(textures))
+
+    #5141?
+    texture = textures[0]
+    try:
+        #result = colors[bitmap_indices]
+        img = Image.fromarray(texture, 'RGB')
+    except:
+        print('FAILED')
+        img = Image.fromarray(texture, 'L')
+    img.show()

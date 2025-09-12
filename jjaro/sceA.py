@@ -47,6 +47,14 @@ def load(file_path: str):
     m = Scea()
 
     with (open(file_path, 'rb') as f):
+        #
+        # fork_start = 0
+        # if (MacBinaryHeader(reader.ReadBytes(128))) {
+        # fork_start = 128;
+        # }
+        # reader.BaseStream.Seek(fork_start, SeekOrigin.Begin);
+
+        #f.seek(128)
 
         # Header.
         m.header = Header.from_stream(f)
@@ -62,6 +70,7 @@ def load(file_path: str):
 
         # TODO: Add fork start offset.
         # Each entry is a level, I suppose?
+        #print(len(entries.values()))
         for entry in list(entries.values())[0:1]:
             f.seek(entry.offset)
 
